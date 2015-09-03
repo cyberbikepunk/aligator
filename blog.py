@@ -6,10 +6,11 @@ from wtforms import StringField, SubmitField, Form
 from wtforms.validators import DataRequired
 from flask import Markup
 from markdown import markdown
-
+from os.path import realpath, dirname, join
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
+app.debug = True
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
@@ -38,12 +39,10 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    name = None
-    form = NameForm()
-    # if form.validate():
-    #     name = form.name.data
-    #     form.name.data = ''
-    return render_template('index.html', form=form, name=name)
+    cwd = dirname(realpath(__file__))
+    with open(join(cwd, 'posts/test.md')) as f:
+        post = f.read()
+    return render_template('index.html', post=post)
 
 
 if __name__ == '__main__':
