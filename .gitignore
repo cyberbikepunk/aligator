@@ -1,6 +1,9 @@
 #PyCharm
 .idea/
 
+#Sandbox files
+./sandbox/
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
