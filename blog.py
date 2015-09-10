@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired
 from flask import Markup
 from markdown import markdown
 from os.path import realpath, dirname, join
+from requests import get
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -15,6 +16,12 @@ app.debug = True
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+
+
+CWD = dirname(realpath(__file__))
+POSTS_DIR = join(CWD, 'posts')
+MINI_CV = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
+PITCH_URL = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
 
 
 class NameForm(Form):
@@ -39,10 +46,16 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    cwd = dirname(realpath(__file__))
-    with open(join(cwd, 'posts/test.md')) as f:
-        post = f.read()
-    return render_template('index.html', post=post)
+    pitch = get(PITCH_URL)
+    mini_cv = get(MINI_CV)
+    return render_template('home.html', pitch=pitch.text, mini_cv=mini_cv.text)
+
+
+@app.route('/blog/')
+def blog():
+    with open(join(POSTS_DIR, 'blog.md')) as f:
+        archive = f.read()
+    return render_template('blog.html', archive=archive)
 
 
 if __name__ == '__main__':

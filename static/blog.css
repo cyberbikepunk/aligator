@@ -1,0 +1,13 @@
+body {
+    padding-top: 70px;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.navbar-brand {
+    line-height: 50px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
