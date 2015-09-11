@@ -7,6 +7,9 @@ blog.sqlite
 #Sandbox files
 /sandbox
 
+# Aggregator config file
+.aggregator.yml
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
