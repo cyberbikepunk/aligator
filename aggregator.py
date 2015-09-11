@@ -6,7 +6,9 @@ from requests import get
 from json import loads
 from yaml import safe_load
 from pprint import pprint
-
+from base64 import b64decode
+from blog import app
+from murls import https
 
 YAML_FILEPATH = join(dirname(__file__), 'aggregator.yml')
 TEMP_DIR = join(dirname(__file__), 'temp')
@@ -21,61 +23,79 @@ class Aggregator(object):
 
 
 class PostAggregator(Aggregator):
-    token = str()
-    user = str()
-    branch = str()
-    exclude = list()
-    repo = str()
+    url = https('api.github.com')
+
+    token = ''
+    user = ''
+    branch = ''
+    repo = ''
+    exclude = []
 
     def __init__(self):
         super(PostAggregator, self).__init__()
         self.__dict__.update(self.parameters['github'])
-        self.query = {'token': self.token}
-        self.api_url = 'https://api.github.com/'
-        self.raw_url = 'https://raw.githubusercontent.com/'
-
-    def get_posts_repo(self):
-        self.request_json(self.api_url + 'repos/' + self.user + '/' + self.repo)
 
     def request_json(self, url):
-        response = get(url=url, params=self.query)
+        response = get(url=url, params={'token': self.token})
+
         if response.status_code == 200:
             json = loads(response.text)
             pprint(json)
             return json
         else:
-            print(response.url)
-            print(response.status_code)
+            app.logger.error('%s failed with %s ',
+                             response.url, response.status_code)
 
-    def get_posts_master_branch_hash(self):
-        json = self.request_json(self.api_url + 'repos/' + self.user + '/' + self.repo + '/branches/' + self.branch)
-        sha = json['commit']['sha']
-        return sha
+    def get_repo_hash(self):
+        """ Return the hash of the master branch of the posts repo. """
 
-    def get_archive_link(self):
-        self.request_tarball(self.api_url + 'repos/' + self.user + '/' + self.repo + '/tarball/' + self.branch)
+        repo_url = self.url.path('repos',
+                                 self.user,
+                                 self.repo,
+                                 'branches',
+                                 self.branch)
 
-    def request_tarball(self, url):
-        response = get(url=url, params=self.query)
-        if response.status_code == 200:
-            json = open(response.text)
-            pprint(json)
-            return json
+        json = self.request_json(repo_url)
+        return json['commit']['sha']
 
-    def request_file(self, file):
-        self.download(self.raw_url + self.user + '/' + self.repo + '/' + self.branch + '/' + file)
+    def get_file_hashes(self, repo_hash):
+        """ Return the hashes of all post files found inside the repo. """
 
-    @staticmethod
-    def download(url):
-        response = get(url)
-        if response.status_code == 200:
-            return response.text
+        tree_url = self.url.path('repos',
+                                 self.user,
+                                 self.repo,
+                                 'git',
+                                 'trees',
+                                 repo_hash)
 
-    def get_tree(self, sha):
-        self.request_json(self.api_url + 'repos/' + self.user + '/' + self.repo + '/git/trees/' + sha)
+        json = self.request_json(tree_url)
+
+        for file in json['tree']:
+            if file['path'] not in self.exclude:
+                yield file['sha']
+
+    def get_file_content(self, file_hash):
+        """ Return the content of a post as unicode. """
+
+        url = self.url.path('repos',
+                            self.user,
+                            self.repo,
+                            'git',
+                            'blobs',
+                            file_hash)
+
+        json = self.request_json(url)
+        bytes_ = b64decode(json['content'])
+        return bytes_.decode()
+
 
 if __name__ == '__main__':
-    a = PostAggregator()
-    sha = a.get_posts_master_branch_hash()
-    a.get_tree(sha)
-    a.request_file('README.md')
+    """ Demonstrate the use of the module. """
+
+    pa = PostAggregator()
+    repo = pa.get_repo_hash()
+    files = pa.get_file_hashes(repo)
+
+    for file_id in files:
+        content = pa.get_file_content(file_id)
+        print(content)
