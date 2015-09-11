@@ -2,24 +2,28 @@ from flask import Flask, render_template
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
+from flask.ext.sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField, Form
 from wtforms.validators import DataRequired
 from flask import Markup
 from markdown import markdown
-from os.path import realpath, dirname, join
+from os.path import dirname, join
 from requests import get
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/loic/Code/charm/blog/blog.sqlite'
+
 app.debug = True
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
 
 
-CWD = dirname(realpath(__file__))
-POSTS_DIR = join(CWD, 'posts')
+BASE_DIR = dirname(__file__)
+POSTS_DIR = join(BASE_DIR, 'posts')
 MINI_CV = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
 PITCH_URL = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
 
