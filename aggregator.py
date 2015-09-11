@@ -5,7 +5,6 @@ from os.path import dirname, join
 from requests import get
 from json import loads
 from yaml import safe_load
-from pprint import pprint
 from base64 import b64decode
 from blog import app
 from murls import https
@@ -40,7 +39,6 @@ class PostAggregator(Aggregator):
 
         if response.status_code == 200:
             json = loads(response.text)
-            pprint(json)
             return json
         else:
             app.logger.error('%s failed with %s ',
@@ -59,7 +57,7 @@ class PostAggregator(Aggregator):
         return json['commit']['sha']
 
     def get_file_hashes(self, repo_hash):
-        """ Return the hashes of all post files found inside the repo. """
+        """ Return the hashes of all posts found inside the repo. """
 
         tree_url = self.url.path('repos',
                                  self.user,
@@ -85,8 +83,8 @@ class PostAggregator(Aggregator):
                             file_hash)
 
         json = self.request_json(url)
-        bytes_ = b64decode(json['content'])
-        return bytes_.decode()
+        content = b64decode(json['content'])
+        return content.decode()
 
 
 if __name__ == '__main__':
@@ -97,5 +95,5 @@ if __name__ == '__main__':
     files = pa.get_file_hashes(repo)
 
     for file_id in files:
-        content = pa.get_file_content(file_id)
-        print(content)
+        text = pa.get_file_content(file_id)
+        print(text)
