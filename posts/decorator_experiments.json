@@ -1,0 +1,611 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Monkey-patching: a beginner's tutorial on decorators\n",
+    "\n",
+    "## Monkey-patching!\n",
+    "Decorators are basically monkey-patching mechanisms. What's monkey-patching? Well, in the context of this tutorial, monkey-patching just means __substituting a function on the fly__. More generally, monkey-patching is a form of meta-programming, the art of producing code with code. Meta-programming is possible in python because functions, methods, classes and even modules can be manipulated just like ordinary variables. We'll make good use of that.\n",
+    "\n",
+    "## Why is it useful?\n",
+    "Monkey-patching is a really nice way to implement seperation of concerns: the idea that a function should do only one thing. Seperation of concerns produces cleaner code. That's by no means the only use-case for decorators, but it's a major one. I have neither the patience nor the knowledge to describe them all. \n",
+    "\n",
+    "## A quick example\n",
+    "Say you have a function that substracts 2 from its input. On top of that, you wanna write to the log every time the function is called. You could add a line inside your function telling it to write to the log file, but that's breaking the rule that a function should do only one thing. \n",
+    "\n",
+    "Decorator to the rescue! First write a logger decorator, then apply it to your function, then just call the function like normal... et voila... you have seperation of concerns! The big bonus is that you're free to reuse that decorator as much as you want on other functions. Tada! You also have dry code.\n",
+    "\n",
+    "Ok, so with python's decorator syntax, what I've just described looks like this:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<function minus_two at 0x7f77781342f0> is calculating!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def log_me(function):\n",
+    "    print('%s is calculating!' % function)\n",
+    "    return function\n",
+    "\n",
+    "@log_me\n",
+    "def minus_two(n):\n",
+    "    return n - 2\n",
+    "\n",
+    "addition = minus_two(7)\n",
+    "addition"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Decorator definition"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In the above example, `log_me` is the decorator and `minus_two` is being decorated. And now comes the take away point: __a decorator is a function that returns a function__. Check it out... that's precisely what `log_me` does. All decorators must return a function. In fact, the above script is pure __syntactic sugar__ and is equivalent to:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<function minus_two at 0x7f77781342f0> is calculating!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "addition = log_me(minus_two)(7)\n",
+    "addition"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now we're ready to roll. We'll first learn to monkey-patch *without* the specific decorator syntax. Once that's understood, we'll move on to the sweeter stuff. So... let's go ahead and monkey-patch one step at a time!..."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Step 1. Write a simple identity decorator \n",
+    "An identity is a function that returns its input without changing it."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Inside identity I could monkeypatch <function minus_two at 0x7f77781342f0> if I wanted to!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<function __main__.minus_two>"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def identity(f):\n",
+    "    print('Inside identity I could monkeypatch %s if I wanted to!' % f)\n",
+    "    return f\n",
+    "\n",
+    "the_same = identity(minus_two)\n",
+    "the_same    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now let's add a message inside `minus_two` itself, so we can follow the code sequence. It might look trivial but it will come in handy later, when things start to get more complicated.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Now inside minus_two with n = 12\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "10"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def minus_two(n):\n",
+    "    print('Now inside minus_two with n = %s' % n)\n",
+    "    return n - 2\n",
+    "\n",
+    "ten = minus_two(12)\n",
+    "ten"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Nothing's changed except our little function is now a little more verbose. Okay, it's time to apply the `identity` function to `minus_two`. We *should* get the same result... drum roll..."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Inside identity I could monkeypatch <function minus_two at 0x7f77783baf28> if I wanted to!\n",
+      "Now inside minus_two with n = 12\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "10"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result = identity(minus_two)(12)\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Step 2. Write a real monkey-patch\n",
+    "That wasn't very interesting, let's *really* monkey-patch the function `minus_two`, say with a function called `plus_four`. Out `monkey_patch` function will take any function object and always return the input value + 4! Not rocket science by any stretch of the imagination."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Inside monkey-patch I swap <function minus_two at 0x7f77783baf28> with <function plus_four at 0x7f7778134158>\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<function __main__.plus_four>"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def plus_four(n):\n",
+    "    print('Now inside the function plus_four with n = %s' % n)\n",
+    "    return n + 4\n",
+    "\n",
+    "def monkey_patch(f):\n",
+    "    print('Inside monkey-patch I swap %s with %s' % (f, plus_four))\n",
+    "    return plus_four\n",
+    "\n",
+    "not_the_same = monkey_patch(minus_two)\n",
+    "not_the_same"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We have our monkey-patch decorator function! Now let's apply it to the good old function `minus_two`..."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Inside monkey-patch I swap <function minus_two at 0x7f77783baf28> with <function plus_four at 0x7f7778134158>\n",
+      "Now inside the function plus_four with n = 18\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "22"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result = monkey_patch(minus_two)(18)\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Step 3. Use python's syntactic sugar\n",
+    "That's the whole point. Python provides a nice expressive and concise way of achieving exactly what we've just done! So let's use it..."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Inside monkey-patch I swap <function minus_two at 0x7f77781347b8> with <function plus_four at 0x7f7778134158>\n",
+      "Now inside the function plus_four with n = 1\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "@monkey_patch\n",
+    "def minus_two(n):\n",
+    "    print('Now I am inside the function minus_two with n = %s' % n)\n",
+    "    return n - 2\n",
+    "\n",
+    "result = minus_two(1)\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Cool. Get this: from the perspective of the coder calling the function `minus_two`, we've changed the rules of algebra! From now on 1 - 2 = 5. Yeah."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Step 4. Scopes 101\n",
+    "Before we can go any further, we need to take a step back for a second and turn our attention to scopes. In python, functions (as well as methods and classes) always have access to their outer scope, like so:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "hello from the outer scope\n"
+     ]
+    }
+   ],
+   "source": [
+    "a = 'hello from the outer scope'\n",
+    "\n",
+    "def print_a_variable_from_the_outer_scope():\n",
+    "    print(a)\n",
+    "    \n",
+    "print_a_variable_from_the_outer_scope()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This is something we use all the time without noticing. For example, when we import a class or function or any object into a python module, it's available everywhere in the module thereafter. The failure to recognize this is often the reason why beginners fail to understand decorator logic. That included me. I had that eureka moment. Let me share it."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Step 5. Write a parameterizable decorator\n",
+    "Let's go one step further and write a decorator that replaces a function by an another one, but not always the same one. We want to tell a generic decorator which function to substitute. To achieve that, we'll need the concept of scopes we've just explained. Ok, so first, let's volunteer two substitute functions we'll be able to choose from: `divide_by_six` and `multiply_by_twelve`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def divide_by_six(n):\n",
+    "    print('Inside the function divide_by_six with n = %s' % n)\n",
+    "    return n / 6\n",
+    "\n",
+    "def multiply_by_twelve(n):\n",
+    "    print('Inside the function multiply_by_twelve with n = %s' % n)\n",
+    "    return n * 12"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Take a look at the following script. In a nutshell, what we want to do is write the decorator `replace_with` to make the script work. For now, it's empty and the script gives an error. How do we go about this? "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The decorator is empty!\n"
+     ]
+    }
+   ],
+   "source": [
+    "try:\n",
+    "    def replace_with(f):\n",
+    "        # The decorator needs to do something\n",
+    "        pass\n",
+    "\n",
+    "    @replace_with(multiply_by_twelve)\n",
+    "    def minus_five(n):\n",
+    "        print('Now I am inside the function minus_five with n = %s' % n)\n",
+    "        return n - 5\n",
+    "\n",
+    "    highjacked = minus_five(10)\n",
+    "    highjacked\n",
+    "except:\n",
+    "    print('The decorator is empty!')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Hint. Remember that a decorator is a function that returns another function. Really? Actually, no. I lied to you: as a matter of fact, it's the __entire expression after the `@` sign__ that must return a function! This subtelty is usually another gotcha for beginners. Hang on tight. It means that the function `replace_with` must itself __return a function that returns a function__. Hang on tight, like I said!... here's the way to do it:  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def replace_with(substitute):\n",
+    "    print('The substitute function is %s' % substitute)\n",
+    "    def calculator(original):\n",
+    "        print('Inside the wrapper function I can use %s from the outer scope' % substitute)\n",
+    "        return substitute\n",
+    "    return calculator"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Indeed, in the above, `replace_with` returns the function `calculator`, a wrapper function that returns a function. That was the first trick. The second trick was: `calculator` had access to its outer scope and that's where it got the `substitute` variable from. Basically, if you get this, you've understood the basic mechanism behind decorators. Nuff said. It's time to apply our decorator. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The substitute function is <function divide_by_six at 0x7f7778123f28>\n",
+      "Inside the wrapper function I can use <function divide_by_six at 0x7f7778123f28> from the outer scope\n",
+      "Inside the function divide_by_six with n = 10\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "1.6666666666666667"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "@replace_with(divide_by_six)\n",
+    "def minus_five(n):\n",
+    "    print('Now I am inside the function minus_five with n = %s' % n)\n",
+    "    return n - 5\n",
+    "\n",
+    "high_jacked = minus_five(10)\n",
+    "high_jacked"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "... and again for good measure..."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The substitute function is <function multiply_by_twelve at 0x7f7778134488>\n",
+      "Inside the wrapper function I can use <function multiply_by_twelve at 0x7f7778134488> from the outer scope\n",
+      "Inside the function multiply_by_twelve with n = 10\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "120"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "@replace_with(multiply_by_twelve)\n",
+    "def minus_five(n):\n",
+    "    print('Now I am inside the function minus_five with n = %s' % n)\n",
+    "    return n - 5\n",
+    "\n",
+    "high_jacked = minus_five(10)\n",
+    "high_jacked"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Obviously, there's a lot more to decorators than what we've covered in this tutorial. But we'll stop here for now. The goal was to overcome a couple of mental blockages people typically have when they first come across the concept. I would like to write more on the subject. The next logical step would be to show how you can make decorators with class instances or even classes themselves. And also how you can decorate not only functions, but classes too. Anyways, that's it for now! Ciao ciao."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.4.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
