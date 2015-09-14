@@ -9,6 +9,8 @@ from flask import Markup
 from markdown import markdown
 from os.path import dirname, join
 from requests import get
+from json import loads
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -46,6 +48,14 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+@app.route('/nb')
+def notebook():
+    with open('/home/loic/Code/charm/blog/posts/decorator_experiments.ipynb') as f:
+        nb = f.read()
+        json = loads(nb)
+    return render_template('notebook.html', notebook=json)
 
 
 @app.route('/', methods=['GET', 'POST'])
