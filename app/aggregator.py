@@ -1,9 +1,5 @@
 """ This module aggregates content from other websites. """
 
-import sys
-from pprint import pprint
-
-pprint(sys.path)
 
 from requests import get
 from json import loads
@@ -43,6 +39,9 @@ class Aggregator(object):
                                  self.branch)
 
         json = self.request_json(repo_url)
+        if app.debug:
+            pprint(json)
+
         return json['commit']['sha']
 
     def get_file_hashes(self, repo_hash):
@@ -56,10 +55,12 @@ class Aggregator(object):
                                  repo_hash)
 
         json = self.request_json(tree_url)
+        if app.debug:
+            pprint(json)
 
         for file in json['tree']:
             if file['path'] not in self.exclude:
-                yield file['sha']
+                yield file['sha'], file['path']
 
     def get_file_content(self, file_hash):
         """ Return the content of a post as unicode. """
@@ -72,17 +73,36 @@ class Aggregator(object):
                             file_hash)
 
         json = self.request_json(url)
-        content = b64decode(json['content'])
-        return content.decode()
 
+        content = b64decode(json['content']).decode()
+        if app.debug:
+            print(content)
+
+        return content
+
+    def get_last_commit(self, filename):
+        """ Return the author, the date and the message of the last commit made to a file. """
+
+        json = self.request_json(self.url.path('repos',
+                                               self.user,
+                                               self.repo,
+                                               'commits').query(file=filename))
+
+        last = json[0]['commit']
+        if app.debug:
+            pprint(json)
+
+        return last['author']['name'], last['author']['date'], last['message']
 
 if __name__ == '__main__':
     """ Demonstrate the use of the module. """
 
+    app.debug = False
     pa = Aggregator()
     repo_ = pa.get_repo_hash()
     files = pa.get_file_hashes(repo_)
 
-    for file_id in files:
-        text = pa.get_file_content(file_id)
-        print(text)
+    for sha, file_ in files:
+        text = pa.get_file_content(sha)
+        author, date, message = pa.get_last_commit(file_)
+        print(file_, author, date, message)
