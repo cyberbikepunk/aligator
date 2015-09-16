@@ -2,12 +2,12 @@
 
 
 from model import db
-from .aggregator import PostAggregator
+from .aggregator import Aggregator
 
 
 def synchronize():
 
-    pa = PostAggregator()
+    pa = Aggregator()
     repo = pa.get_repo_hash()
     files = pa.get_file_hashes(repo)
 

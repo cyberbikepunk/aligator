@@ -1,38 +1,28 @@
 """ This module aggregates content from other websites. """
 
+import sys
+from pprint import pprint
 
-from os.path import dirname, join
+pprint(sys.path)
+
 from requests import get
 from json import loads
-from yaml import safe_load
 from base64 import b64decode
-from blog import app
-from .murls import https
+from ..blog import app
 
-YAML_FILEPATH = join(dirname(__file__), 'aggregator.yml')
-TEMP_DIR = join(dirname(__file__), 'temp')
+from .murls import https
+from instance.config import TOKEN, USER, REPO, BRANCH, EXCLUDE
 
 
 class Aggregator(object):
-    parameters = None
-
-    def __init__(self):
-        with open(YAML_FILEPATH) as f:
-            self.parameters = safe_load(f)
-
-
-class PostAggregator(Aggregator):
     url = https('api.github.com')
 
-    token = ''
-    user = ''
-    branch = ''
-    repo = ''
-    exclude = []
-
-    def __init__(self):
-        super(PostAggregator, self).__init__()
-        self.__dict__.update(self.parameters['github'])
+    def __init__(self, token=TOKEN, user=USER, repo=REPO, branch=BRANCH, exclude=EXCLUDE):
+        self.token = token
+        self.user = user
+        self.branch = branch
+        self.repo = repo
+        self.exclude = exclude
 
     def request_json(self, url):
         response = get(url=url, params={'token': self.token})
@@ -41,8 +31,7 @@ class PostAggregator(Aggregator):
             json = loads(response.text)
             return json
         else:
-            app.logger.error('%s failed with %s ',
-                             response.url, response.status_code)
+            app.logger.error('%s failed with %s ', response.url, response.status_code)
 
     def get_repo_hash(self):
         """ Return the hash of the master branch of the posts repo. """
@@ -90,9 +79,9 @@ class PostAggregator(Aggregator):
 if __name__ == '__main__':
     """ Demonstrate the use of the module. """
 
-    pa = PostAggregator()
-    repo = pa.get_repo_hash()
-    files = pa.get_file_hashes(repo)
+    pa = Aggregator()
+    repo_ = pa.get_repo_hash()
+    files = pa.get_file_hashes(repo_)
 
     for file_id in files:
         text = pa.get_file_content(file_id)

@@ -1,6 +1,7 @@
 """ This module instantiates a Flask application. """
 
 
+
 from flask import Flask
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
