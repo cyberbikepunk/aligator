@@ -7,7 +7,7 @@ from json import loads
 from yaml import safe_load
 from base64 import b64decode
 from blog import app
-from murls import https
+from .murls import https
 
 YAML_FILEPATH = join(dirname(__file__), 'aggregator.yml')
 TEMP_DIR = join(dirname(__file__), 'temp')

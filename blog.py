@@ -10,16 +10,8 @@ from json import loads
 from yaml import safe_load
 from os.path import join
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'hard to guess string'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/loic/Code/charm/blog/blog.sqlite'
 
-app.debug = True
-
-manager = Manager(app)
-bootstrap = Bootstrap(app)
-moment = Moment(app)
-db = SQLAlchemy(app)
+from app import app, manager, bootstrap, moment, db
 
 
 BASE_DIR = dirname(__file__)

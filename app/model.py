@@ -36,22 +36,5 @@ class Post(db.Model):
         return 1
 
 
-class Source(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    website = db.Column(db.String, nullable=False)
-    url = db.Column(db.String, nullable=False)
-    username = db.Column(db.String)
-    password = db.Column(db.String)
-
-    def __init__(self, website, username, password, url):
-        self.website = website
-        self.password = password
-        self.username = username
-        self.url = url
-
-    def __repr__(self):
-        return '<Source=%s>' % self.website
-
-
 if __name__ == '__main__':
     db.create_all()
