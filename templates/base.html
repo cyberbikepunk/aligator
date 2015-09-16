@@ -1,6 +1,8 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}{% endblock %}
+{% block title %}
+    {{ profile.greeting }}
+{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -8,88 +10,21 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">
-                    <img width="40" height="40" src="{{ url_for('static', filename='upside_down_bike_black_40px.png') }}" class="img-responsive img-rounded" alt="Responsive image">
-                </a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/blog/">Blog</a></li>
-                </ul>
-                <ul class="nav navbar-right">
-
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 {% endblock %}
 
 {% block content %}
-    <div id="content" class="container">
-        <div class="row">
-            <div id="main-content" class="col-md-8 col-sm-1">
-                {% block main_content %}{% endblock %}
-            </div>
-            <div id="side-content" class="col-md-4 col-sm-1">
-                {% block side_content %}
-                    <div class="row">
-                        <div class="col-md-6 col-sm-1 pull-left">
-                            <img src="{{ url_for('static', filename='upside_down_bike_black_640px.jpg') }}"  class="img-rounded img-responsive" alt="Responsive image">
-                        </div>
-                    </div>
-                    <h2>
-                        <b>Dr. Loic Jounot</b>
-                    </h2>
-                    <p class="lead">
-                        <em>Freelance data punk in Berlin</em>
-                    </p>
-                    <h3>
-                        <span class="label inline-block label-default">Python</span>
-                        <span class="label inline-block label-default">Pandas</span>
-                        <span class="label inline-block label-default">Matplotlib</span>
-                        <span class="label inline-block label-default">Bokeh</span>
-                        <span class="label inline-block label-default">Scrapy</span>
-                        <span class="label inline-block label-default">BeautifulSoup</span>
-                        <span class="label inline-block label-default">PythonAnywhere</span>
-                        <span class="label inline-block label-default">SQLAlchemy</span>
-                        <span class="label inline-block label-default">Flask</span>
-                        <span class="label inline-block label-default">Bootstrap</span>
-                        <span class="label inline-block label-default">Git</span>
-                        <span class="label inline-block label-default">Matlab</span>
-                    </h3>
-                    <p class="lead">
-                        Follow me on
-                        <a href="https://twitter.com/cyberbikepunk" target="_blank" class="inline-block"><img src="{{ url_for('static', filename='twitter.png') }}"  class="img-rounded" alt="Twitter"></a>
-                        <a href="http://stackoverflow.com/users/4764473/cyberbikepunk" target="_blank" class="inline-block"><img src="{{ url_for('static', filename='stackoverflow.png') }}"  class="img-rounded" alt="Stackoverflow"></a>
-                        <a href="https://github.com/cyberbikepunk" target="_blank" class="inline-block"><img src="{{ url_for('static', filename='github.png') }}"  class="img-rounded" alt="Github"></a>
-                        <a href="https://de.linkedin.com/in/cyberbikepunk" target="_blank" class="inline-block"><img src="{{ url_for('static', filename='linkedin.png') }}"  class="img-rounded" alt="LinkedIn"></a>
-                    </p>
-                {% endblock %}
-            </div>
-        </div>
+    {# home, archive or post #}
+{% endblock %}
+
+{% block footer %}
+    <div id="footer" class="container">
+        <small class="text-left">Powered by Flask and Bootstrap. CC licensed. Source code on <a href="http://github.com/cyberpunk/blog">github</a></small>
     </div>
 {% endblock %}
 
-<div id="footer" class="container">
-    {% block footer %}
-        <small class="text-left">Powered by Flask and Bootstrap. CC licensed. Source code on <a href="http://github.com/cyberpunk/blog">github</a></small>
-    {% endblock %}
-</div>
-
-
 {% block scripts %}
     {{ super() }}
-    {{ moment.include_moment() }}
-    <link rel="stylesheet" href="{{url_for('static', filename='blog.css')}}">
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=py&amp;"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='blog.css') }}">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=py"></script>
 {% endblock %}
