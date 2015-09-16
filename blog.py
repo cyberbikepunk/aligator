@@ -3,14 +3,12 @@ from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
-from wtforms import StringField, SubmitField, Form
-from wtforms.validators import DataRequired
 from flask import Markup
 from markdown import markdown
-from os.path import dirname, join
-from requests import get
+from os.path import dirname
 from json import loads
-
+from yaml import safe_load
+from os.path import join
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -25,14 +23,10 @@ db = SQLAlchemy(app)
 
 
 BASE_DIR = dirname(__file__)
-POSTS_DIR = join(BASE_DIR, 'posts')
+POST_FILE = '/home/loic/Documents/posts/decorator_tutorial.ipynb'
 MINI_CV = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
 PITCH_URL = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
-
-
-class NameForm(Form):
-    name = StringField('What is your name?', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+PROFILE_FILE = join(BASE_DIR, 'instance', 'profile.yml')
 
 
 @app.template_filter('markdown')
@@ -52,24 +46,44 @@ def internal_server_error(e):
 
 @app.route('/nb')
 def notebook():
-    with open('/home/loic/Code/charm/blog/posts/decorator_experiments.ipynb') as f:
+    with open(PROFILE_FILE) as f:
+        profile = safe_load(f)
+
+    with open('/home/loic/Documents/posts/decorator_tutorial.ipynb') as f:
         nb = f.read()
         json = loads(nb)
-    return render_template('notebook.html', notebook=json)
+
+    return render_template('notebook.html', notebook=json, profile=profile)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    pitch = get(PITCH_URL)
-    mini_cv = get(MINI_CV)
-    return render_template('home.html', pitch=pitch.text, mini_cv=mini_cv.text)
+    """
+    Render posts for the front page in t,
+    and the blogger profile inside the sidebar.
+    """
+
+    with open(PROFILE_FILE) as f:
+        profile = safe_load(f)
+
+    jumbotron = 'I am the jumbotron'
+    sticky = ['I am the first sticky post', 'I am the second sticky post']
+
+    return render_template('home.html', profile=profile, jumbotron=jumbotron, sticky=sticky)
 
 
 @app.route('/blog/')
 def blog():
-    with open(join(POSTS_DIR, 'blog.md')) as f:
+
+    with open(PROFILE_FILE) as f:
+        profile = safe_load(f)
+
+    jumbotron = 'I am the jumbotron'
+    sticky = ['I am the first sticky post', 'I am the second sticky post']
+
+    with open(POST_FILE) as f:
         archive = f.read()
-    return render_template('blog.html', archive=archive)
+    return render_template('archive.html', archive=archive, profile=profile, jumbotron=jumbotron, sticky=sticky)
 
 
 if __name__ == '__main__':

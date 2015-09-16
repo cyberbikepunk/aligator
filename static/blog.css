@@ -8,9 +8,17 @@ body {
 }
 
 .navbar-brand {
-    line-height: 50px;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    padding-bottom: 0;
+    padding-top: 0;
+    padding-left: 0;
+}
+
+.navbar-brand > img {
+    height: 50px;
+}
+
+.navbar-text {
+    line-height: 20px;
 }
 
 kbd, samp {
@@ -27,3 +35,33 @@ pre {
 samp.output {
     font-weight: bold;
 }
+
+#accounts > li > a {
+    padding: 8px;
+}
+
+#accounts > li > a > img {
+    height: 34px;
+}
+
+#accounts > li > a > span {
+    padding-left: 8px;
+}
+
+.icon {
+    padding-right: 10px;
+    height: 16px;
+}
+
+nav.navbar {
+    height: 50px!important;
+}
+
+#baseline > span.kwd,
+#baseline > span.pln {
+    font-weight: bold;
+}
+
+/*#mobile-menu.in {*/
+    /*background-color: #222;*/
+/*}*/

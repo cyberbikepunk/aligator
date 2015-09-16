@@ -1,28 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}
-    Welcome to cyberbikepunk's tech blog!
-{% endblock %}
+{% block content %}
+    <div id="content" class="container">
+        <div class="row">
 
-{% block main_content %}
-    <div class="jumbotron" id="pitch">
-        <button class="btn btn-primary btn-lg" type="button" data-parent="#pitch" data-toggle="collapse" data-target="#hello">
-            Hire me
-        </button>
-        <button class="btn btn-success btn-lg" type="button" data-parent="#pitch" data-toggle="collapse" data-target="#cv">
-            Micro CV
-        </button>
-        <button class="btn btn-info btn-lg" type="button" data-parent="#pitch" data-toggle="collapse" data-target="#portfolio">
-            Projects
-        </button>
-        <div class="collapse in" id="hello">
-            {{ pitch | markdown }}
-        </div>
-        <div class="collapse" id="cv">
-            {{ mini_cv | markdown }}
-        </div>
-        <div class="collapse" id="portfolio">
-            This is my portfolio
+            {# The main section #}
+
+            <div id="main" class="col-md-8 col-sm-12 col-xs-12">
+            {% block main %}
+                <div class="row jumbotron">
+                    {{ jumbotron | markdown }}
+                </div>
+                {% for item in sticky %}
+                    <div class="row visible-sm visible-md visible-lg">
+                        {{ item | markdown }}
+                    </div>
+                {% endfor %}
+            {% endblock %}
+            </div>
+
+            {# The sidebar on the right #}
+
+            <div id="side-content" class="col-md-4 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-3 col-xs-4 pull-left">
+                        <img src="{{ url_for('static', filename=profile.photo) }}" class="img-rounded img-responsive" alt="{{ profile.name }}">
+                    </div>
+                </div>
+
+                <h2>{{ profile.name }}</h2>
+                <p class="lead">{{ profile.title | title }}</p>
+                <p>
+                    <img src="{{ url_for('static', filename='email.png') }}" class="inline-block icon"><span>{{ profile.email }}</span><br>
+                    <img src="{{ url_for('static', filename='location.png') }}"  class="inline-block icon"><span>{{ profile.locations | join(', ') }}</span><br>
+                </p>
+                <p>
+                    {% for organisation in profile.organisations %}
+                        <img src="{{ url_for('static', filename='star.png') }}"  class="inline-block icon">
+                        <a href="{{ organisation.link }}">{{ organisation.name | trim }}</a><br>
+                    {% endfor %}
+                </p>
+
+                <p class="lead">
+                    {% for tag in profile.tags %}
+                        <span class="label inline-block label-default">{{ tag }}</span>
+                    {% endfor %}
+                </p>
+            </div>
         </div>
     </div>
+
 {% endblock %}
+
+

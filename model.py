@@ -13,6 +13,8 @@ class Post(db.Model):
     excerpt = db.Column(db.UnicodeText)
     body = db.Column(db.UnicodeText)
     publication_date = db.Column(db.DateTime)
+    url = db.Column(db.String)
+    filename = db.Column(db.String)
 
     source = db.relationship('Source', backref=db.backref('posts', lazy='dynamic'))
 
@@ -24,6 +26,14 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post=%s>' % self.title
+
+    @property
+    def is_sticky(self):
+        return self.filename.isupper()
+
+    @property
+    def priority(self):
+        return 1
 
 
 class Source(db.Model):

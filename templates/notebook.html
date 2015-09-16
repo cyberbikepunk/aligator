@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "home.html" %}
 
 {% block title %}
     cyberbikepunk | Blog
 {% endblock %}
 
-{% block main_content %}
+{% block main %}
     {% if notebook['cells'] %}
         {% for cell in notebook['cells'] %}
 
@@ -58,4 +58,8 @@
 
         {% endfor %}
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
 {% endblock %}

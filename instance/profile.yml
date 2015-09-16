@@ -1,0 +1,60 @@
+# Blog settings
+
+blog: cyberbikepunk
+greeting: Welcome to cyberbikepunk's blog!
+baseline: Data analysis with python
+
+photo: photo.jpg
+favicon: favicon.ico
+logo: logo.png
+
+name: Loic Jounot
+title: cyberbikepunk
+email: loic@cyberpunk.bike
+
+locations:
+  - Berlin
+
+tags:
+  - python
+  - pandas
+  - matplotlib
+  - bokeh
+  - seaborn
+  - numpy
+  - scipy
+  - sqlalchemy
+  - flask
+  - scrapy
+  - git
+  - bootstrap
+  - pythonanywhere
+  - dataviz
+  - mathematics
+  - statistics
+  - open-source
+  - creative commons
+  - decentralize
+
+jumbotron: hello.md
+
+sticky:
+  - micro_cv.md
+  - highlights.md
+
+accounts:
+  - name: twitter
+    link: https://twitter.com/cyberbikepunk
+  - name: stackoverflow
+    link: http://stackoverflow.com/users/4764473/cyberbikepunk
+  - name: github
+    link: https://github.com/cyberbikepunk
+  - name: linkedin
+    link: https://de.linkedin.com/in/cyberbikepunk
+
+organisations:
+  - name: coding amigos
+    link: http://codingamigos.com
+  - name: cogeeks
+    link: http://cogeeks.com
+
