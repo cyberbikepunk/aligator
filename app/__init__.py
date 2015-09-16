@@ -1,21 +1,23 @@
 """ This module instantiates a Flask application. """
 
-
-
 from flask import Flask
-from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'hard to guess string'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/loic/Code/charm/blog/blog.sqlite'
+bootstrap = Bootstrap()
+db = SQLAlchemy()
 
-app.debug = True
 
-manager = Manager(app)
-bootstrap = Bootstrap(app)
-moment = Moment(app)
-db = SQLAlchemy(app)
+def create_app():
+    app = Flask(__name__)
+    app.debug = True
+
+    bootstrap.init_app(app)
+    db.init_app(app)
+
+    return app
+
+
+
+

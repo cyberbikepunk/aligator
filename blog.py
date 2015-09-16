@@ -11,14 +11,15 @@ from yaml import safe_load
 from os.path import join
 
 
-from app import app, manager, bootstrap, moment, db
-
+from app import  create_app
 
 BASE_DIR = dirname(__file__)
 POST_FILE = '/home/loic/Documents/posts/decorator_tutorial.ipynb'
 MINI_CV = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
 PITCH_URL = 'https://gist.githubusercontent.com/cyberbikepunk/29ff425054b71ea9220f/raw'
 PROFILE_FILE = join(BASE_DIR, 'instance', 'profile.yml')
+
+app = create_app()
 
 
 @app.template_filter('markdown')
@@ -79,4 +80,4 @@ def blog():
 
 
 if __name__ == '__main__':
-    manager.run()
+    app.run()
