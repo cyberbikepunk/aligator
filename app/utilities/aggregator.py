@@ -3,12 +3,10 @@
 from pprint import pprint
 from json import loads
 from base64 import b64decode
-
 from requests import get
-
 from manage import app
-from app.utilities.murls import https
-from instance.config import TOKEN, USER, REPO, BRANCH, EXCLUDE, DEBUG_AGGREGATOR as DEBUG, GITHUB_API_URL
+from .murls import https
+from .tools import get_blog_settings
 
 
 class PostAggregatorException(Exception):
@@ -17,6 +15,7 @@ class PostAggregatorException(Exception):
 
 def aggregate():
     """ Fetch the posts from the repository. """
+
     a = Aggregator()
 
     try:
@@ -34,14 +33,17 @@ def aggregate():
 
 
 class Aggregator(object):
-    url = https(GITHUB_API_URL)
+    """ The Aggregator class queries the GitHub API. """
 
-    def __init__(self, token=TOKEN, user=USER, repo=REPO, branch=BRANCH, exclude=EXCLUDE):
-        self.token = token
-        self.user = user
-        self.branch = branch
-        self.repo = repo
-        self.exclude = exclude
+    def __init__(self):
+        settings = get_blog_settings()
+
+        self.url = https('api.github.com')
+        self.token = settings['github']['token']
+        self.user = settings['github']['user']
+        self.branch = settings['github']['branch']
+        self.repo = settings['github']['repo']
+        self.exclude = settings['github']['exclude']
 
     def request_json(self, url):
         response = get(url=url, params={'token': self.token})
@@ -60,9 +62,6 @@ class Aggregator(object):
                                                self.repo,
                                                'branches',
                                                self.branch))
-        if DEBUG:
-            pprint(json)
-
         return json['commit']['sha']
 
     def get_file_hashes(self, repo_hash):
@@ -73,9 +72,6 @@ class Aggregator(object):
                                                'git',
                                                'trees',
                                                repo_hash))
-        if DEBUG:
-            pprint(json)
-
         for file in json['tree']:
             if file['path'] not in self.exclude:
                 yield file['sha'], file['path']
@@ -92,9 +88,6 @@ class Aggregator(object):
         content_as_bytes = b64decode(json['content'])
         content_as_unicode = content_as_bytes.decode()
 
-        if DEBUG:
-            print(content_as_unicode[0:80], '...')
-
         return content_as_unicode
 
     def get_last_commit(self, filename):
@@ -103,18 +96,12 @@ class Aggregator(object):
                                                self.user,
                                                self.repo,
                                                'commits').query(file=filename))
-
         last = json[0]['commit']
-
-        if DEBUG:
-            pprint(json)
-
         return last['author']['name'], last['author']['date'], last['message']
 
 if __name__ == '__main__':
     """ Demonstrate the use of the module. """
-
-    DEBUG = False
+    app.debug = True
     posts = aggregate()
 
     for post in posts:
