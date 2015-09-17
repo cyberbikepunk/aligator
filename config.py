@@ -6,9 +6,10 @@ base_dir = abspath(dirname(__file__))
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + join(base_dir, 'production.db')
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
-    def init_app(self):
+    @staticmethod
+    def init_app(app):
         pass
 
 
@@ -23,5 +24,11 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    pass
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + join(base_dir, 'production.db')
 
+
+choose = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig,
+}
