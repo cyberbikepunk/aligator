@@ -1,9 +1,9 @@
 """ This module define the database model. """
 
-from ..instance.config import USER_PROFILE_FILE
+from instance.config import USER_PROFILE_FILE
 from os.path import splitext
 from yaml import load
-from blog import db
+from manage import db
 
 with open(USER_PROFILE_FILE) as f:
     sticky_posts = load('sticky')
