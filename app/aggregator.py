@@ -5,7 +5,7 @@ from base64 import b64decode
 from requests import get
 from manage import app
 from app.utilities.murls import https
-from app.utilities.tools import get_blog_settings
+from instance.settings import GITHUB_REPO, GITHUB_EXCLUDE, GITHUB_TOKEN, GITHUB_USER, GITHUB_BRANCH
 
 
 class PostAggregatorException(Exception):
@@ -35,17 +35,17 @@ class Aggregator(object):
     """ The Aggregator class queries the GitHub API. """
 
     def __init__(self):
-        settings = get_blog_settings()
+        self.url = https('api.github.com').query(token=GITHUB_TOKEN,
+                                                 login=GITHUB_USER)
+        self.token = GITHUB_TOKEN
+        self.user = GITHUB_USER
+        self.branch = GITHUB_BRANCH
+        self.repo = GITHUB_REPO
+        self.exclude = GITHUB_EXCLUDE
 
-        self.url = https('api.github.com')
-        self.token = settings['github']['token']
-        self.user = settings['github']['user']
-        self.branch = settings['github']['branch']
-        self.repo = settings['github']['repo']
-        self.exclude = settings['github']['exclude']
-
-    def request_json(self, url):
-        response = get(url=url, params={'token': self.token})
+    @staticmethod
+    def request_json(url):
+        response = get(url=url)
 
         if response.status_code == 200:
             json = loads(response.text)
