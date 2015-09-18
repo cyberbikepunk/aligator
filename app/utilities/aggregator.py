@@ -1,6 +1,5 @@
-""" This module aggregates content from other websites. """
+""" This module populates the blog from GitHub. """
 
-from pprint import pprint
 from json import loads
 from base64 import b64decode
 from requests import get
@@ -101,9 +100,7 @@ class Aggregator(object):
 
 if __name__ == '__main__':
     """ Demonstrate the use of the module. """
-    app.debug = True
-    posts = aggregate()
 
-    for post in posts:
+    for post in aggregate():
         for info in post:
             print(info)
