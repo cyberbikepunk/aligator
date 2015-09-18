@@ -30,13 +30,13 @@
 
                 <h2>{{ profile.name }}</h2>
                 <p class="lead">{{ profile.title | title }}</p>
-                <p>
-                    <img src="{{ url_for('static', filename='email.png') }}" class="inline-block icon"><span>{{ profile.email }}</span><br>
-                    <img src="{{ url_for('static', filename='location.png') }}"  class="inline-block icon"><span>{{ profile.locations | join(', ') }}</span><br>
+                <p
+                    <img src="{{ url_for('static', filename='img/email.png') }}" class="inline-block icon"><span>{{ profile.email }}</span><br>
+                    <img src="{{ url_for('static', filename='img/location.png') }}"  class="inline-block icon"><span>{{ profile.locations | join(', ') }}</span><br>
                 </p>
                 <p>
                     {% for organisation in profile.organisations %}
-                        <img src="{{ url_for('static', filename='star.png') }}"  class="inline-block icon">
+                        <img src="{{ url_for('static', filename='img/star.png') }}"  class="inline-block icon">
                         <a href="{{ organisation.link }}">{{ organisation.name | trim }}</a><br>
                     {% endfor %}
                 </p>

@@ -4,8 +4,8 @@ from json import loads
 from base64 import b64decode
 from requests import get
 from manage import app
-from .murls import https
-from .tools import get_blog_settings
+from app.utilities.murls import https
+from app.utilities.tools import get_blog_settings
 
 
 class PostAggregatorException(Exception):

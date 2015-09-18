@@ -3,10 +3,7 @@ from json import loads
 from markdown import markdown
 from flask import Markup
 from . import blog
-from ..utilities.tools import get_blog_settings
-
-
-profile = get_blog_settings()
+from instance.settings import USER_PROFILE
 
 
 @blog.app_template_filter('markdown')
@@ -21,7 +18,7 @@ def notebook():
         nb = ipynb.read()
         json = loads(nb)
 
-    return render_template('notebook.html', notebook=json, profile=profile)
+    return render_template('notebook.html', notebook=json, profile=USER_PROFILE)
 
 
 @blog.route('/')
@@ -30,4 +27,4 @@ def home():
     jumbotron = 'I am the jumbotron'
     sticky = ['I am the first sticky post', 'I am the second sticky post']
 
-    return render_template('home.html', profile=profile, jumbotron=jumbotron, sticky=sticky)
+    return render_template('home.html', profile=USER_PROFILE, jumbotron=jumbotron, sticky=sticky)
