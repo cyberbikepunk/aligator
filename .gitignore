@@ -4,7 +4,7 @@
 #Sensitive information
 /instance
 /sandbox
-development.sqlite
+developmentdb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
