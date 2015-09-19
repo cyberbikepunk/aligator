@@ -27,14 +27,10 @@ class TestBlogModels(TestCase):
         pass
 
     def test_lines(self):
-        lines = ['# The first line is the title',
-                 '',
-                 'The first paragraph is the excerpt.',
-                 '',
-                 '## A random header',
-                 '',
-                 'This is a random paragraph.',
-                 '',
+        lines = ['# The first line is the title', '',
+                 'The first paragraph is the excerpt.', '',
+                 '## A random header', '',
+                 'This is a random paragraph.', '',
                  'This is another random paragraph.']
 
         self.assertEquals(lines, self.markdown_post.top_lines)
