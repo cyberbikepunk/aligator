@@ -1,9 +1,37 @@
-{% extends "home.html" %}
+{% extends "base.html" %}
 
 {% block title %}
     cyberbikepunk | Blog
 {% endblock %}
 
-{% block main_content %}
-    {{ archive | markdown }}
+{% block content %}
+        <div id="content" class="container">
+            {% for post in posts %}
+                {% if post.is_jumbo %}
+                    <div class="row jumbotron">
+                        {{ post.content | markdown }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="row">
+                    {% for post in posts %}
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            {% if post.is_sticky %}
+                                <h1>{{ post.title}}</h1>
+                                {{ post.timestamp }} | {{ post.author }}
+                                <p class="lead">{{ post.excerpt }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    {% for post in posts %}
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            {% if post.is_normal %}
+                                <h1>{{ post.title }}</h1>
+                                {{ post.timestamp }} | {{ post.author }}
+                                <p class="lead">{{ post.excerpt | markdown }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
 {% endblock %}

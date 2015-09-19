@@ -27,7 +27,7 @@
                 {% for account in profile.accounts %}
                     <li><a href="{{ account.link }}" target="_blank">
                         <span class="visible-xs">{{ account.name | title }}</span>
-                        <img src="{{ url_for('static', filename=account.name|lower()~'.png') }}" class="img-rounded visible-sm visible-lg visible-md" alt="{{ account.name | title }}">
+                        <img src="{{ url_for('static', filename='img/'~account.name|lower()~'.png') }}" class="img-rounded visible-sm visible-lg visible-md" alt="{{ account.name | title }}">
                     </a></li>
                 {% endfor %}
             </ul>

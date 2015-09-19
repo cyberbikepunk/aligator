@@ -1,10 +1,11 @@
 # PyCharm
 .idea/
 
-#Sensitive information
+#Sensitive info
 /instance
+
+# Garbage
 /sandbox
-developmentdb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,2 +1,0 @@
-""" Sensitive configaration settings. """
-
