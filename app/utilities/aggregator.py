@@ -18,12 +18,15 @@ class PostAggregationFailed(Exception):
 class Aggregator(object):
     """ The Aggregator class helps collecting files from a repository. """
 
-    def __init__(self, repo, exclude, token, user, branch):
+    def __init__(self, repo=None, exclude=(), token=None, user=None, branch='master'):
+        assert repo and user, 'The aggregator needs at least a repository and a user'
+
         self.token = token
         self.user = user
         self.branch = branch
         self.repo = repo
         self.exclude = exclude
+
         self.base_url = https('api.github.com').query(access_token=self.token)
 
     @staticmethod
@@ -95,9 +98,9 @@ class Aggregator(object):
         return last['author']['name'], last['author']['date'], last['message']
 
 
-def fetch_posts(*args):
+def fetch_posts(**kwargs):
     """ Fetch the posts from the repository. """
-    a = Aggregator(*args)
+    a = Aggregator(**kwargs)
 
     try:
         repo = a.get_repo()
