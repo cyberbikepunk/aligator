@@ -1,4 +1,4 @@
-""" This module defines the data models for the blog blueprint. Heads up: there is no database. """
+""" This module holds the model for the blog blueprint. Heads up: there is no database. """
 
 
 from arrow import get
@@ -19,11 +19,11 @@ class Post(object):
                  content):
 
         self.filename = filename
-        self.slug = slugify(self.file_stem)
         self.author = author
         self.last_commit_message = commit_message
-        self.last_commit_date = get(commit_date).datetime
+        self.last_commit_date = get(commit_date)
         self.content = content
+        self.slug = slugify(self.title)
 
     def __repr__(self):
         return '<Post: %s>' % self.title
@@ -48,38 +48,42 @@ class Post(object):
         return self.filename in STICKY
 
     @property
+    def is_normal(self):
+        return not self.is_jumbo and not self.is_sticky
+
+    @property
     def is_notebook(self):
-        return self.file_extension is 'ipynb'
+        return self.file_extension == '.ipynb'
 
     @property
     def is_markdown(self):
-        return self.file_extension is 'md'
+        return self.file_extension == '.md'
 
     @cached_property
     def json(self):
         if self.is_notebook:
             return loads(self.content)
 
-    def trim_line(self, line_nb):
+    @property
+    def top_lines(self):
         if self.is_notebook:
-            line = self.json.cells[0]['source'][line_nb]
+            return [line.rstrip() for line in self.json['cells'][0]['source']]
         else:
-            line = self.content[line_nb]
-        return line.rstrip(r'\n').rstrip().lstrip('#').lstrip()
+            return self.content.split('\n')
 
     @cached_property
     def title(self):
-        return self.trim_line(0)
+        return self.top_lines[0].lstrip('#').lstrip()
 
     @cached_property
     def excerpt(self):
-        return self.trim_line(2)
+        return self.top_lines[2]
+
+    @cached_property
+    def timestamp(self):
+        return self.last_commit_date.format('dddd D MMMM YYYY')
 
 
-posts = []
-for post in fetch_posts():
-    posts.append(Post(*post))
-    print(Post(*post))
+# There's no database: posts are imported from GitHub
+posts = [Post(*post) for post in fetch_posts()]
 
-if __name__ == '__main__':
-    pass
