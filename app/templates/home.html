@@ -37,7 +37,7 @@
                 <p>
                     {% for organisation in profile.organisations %}
                         <img src="{{ url_for('static', filename='img/star.png') }}"  class="inline-block icon">
-                        <a href="{{ organisation.link }}">{{ organisation.name | trim }}</a><br>
+                        <a href="{{ organisation.link }}" title="{{ organisation.name }}">{{ organisation.name | trim }}</a><br>
                     {% endfor %}
                 </p>
 
