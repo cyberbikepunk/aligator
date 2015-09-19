@@ -8,7 +8,7 @@ from slugify import slugify
 from werkzeug.utils import cached_property
 from instance.settings import JUMBO, STICKY
 from ..utilities.aggregator import fetch_posts
-from instance.settings import GITHUB_REPO, GITHUB_EXCLUDE, GITHUB_TOKEN, GITHUB_USER, GITHUB_BRANCH
+from instance.settings import GITHUB
 
 
 class Post(object):
@@ -86,8 +86,4 @@ class Post(object):
 
 
 # There's no database: posts are imported from GitHub
-posts = [Post(*post) for post in fetch_posts(GITHUB_REPO,
-                                             GITHUB_EXCLUDE,
-                                             GITHUB_TOKEN,
-                                             GITHUB_USER,
-                                             GITHUB_BRANCH)]
+posts = [Post(*post) for post in fetch_posts(**GITHUB)]
