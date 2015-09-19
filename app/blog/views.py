@@ -1,9 +1,14 @@
-from flask import render_template
+""" This module holds three views: home, post and about. """
+
 from json import loads
+
+from flask import render_template
 from markdown import markdown
 from flask import Markup
+
 from . import blog
 from instance.settings import USER_PROFILE
+from .models import posts
 
 
 @blog.app_template_filter('markdown')
@@ -28,3 +33,8 @@ def home():
     sticky = ['I am the first sticky post', 'I am the second sticky post']
 
     return render_template('home.html', profile=USER_PROFILE, jumbotron=jumbotron, sticky=sticky)
+
+
+@blog.route('/archive')
+def archive():
+    return render_template('archive.html', posts=posts, profile=USER_PROFILE)

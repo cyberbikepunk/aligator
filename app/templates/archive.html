@@ -1,9 +1,15 @@
-{% extends "home.html" %}
+{% extends "base.html" %}
 
 {% block title %}
     cyberbikepunk | Blog
 {% endblock %}
 
-{% block main_content %}
-    {{ archive | markdown }}
+{% block content %}
+    {{ posts }}
+    {{ profile }}
+    hello
+    {% for post in posts %}
+        hello
+        {{ post.filename }}
+    {% endfor %}
 {% endblock %}

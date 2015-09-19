@@ -1,42 +1,27 @@
 """ This module populates the blog from GitHub. """
 
+
+from os.path import splitext
 from json import loads
 from base64 import b64decode
 from requests import get
-from manage import app
 from app.utilities.murls import https
 from instance.settings import GITHUB_REPO, GITHUB_EXCLUDE, GITHUB_TOKEN, GITHUB_USER, GITHUB_BRANCH
 
 
-class PostAggregatorException(Exception):
+VALID_EXTENSIONS = ('.ipynb', '.md')
+
+
+class PostAggregationFailed(Exception):
     pass
-
-
-def aggregate():
-    """ Fetch the posts from the repository. """
-
-    a = Aggregator()
-
-    try:
-        repo = a.get_repo_hash()
-        files = a.get_file_hashes(repo)
-
-        for sha, file in files:
-            text = a.get_file_content(sha)
-            author, date, message = a.get_last_commit(file)
-
-            yield file, author, date, message, text
-
-    except PostAggregatorException:
-        raise
 
 
 class Aggregator(object):
     """ The Aggregator class queries the GitHub API. """
 
     def __init__(self):
-        self.url = https('api.github.com').query(token=GITHUB_TOKEN,
-                                                 login=GITHUB_USER)
+        self.url = https('api.github.com')
+
         self.token = GITHUB_TOKEN
         self.user = GITHUB_USER
         self.branch = GITHUB_BRANCH
@@ -45,17 +30,18 @@ class Aggregator(object):
 
     @staticmethod
     def request_json(url):
-        response = get(url=url)
+        response = get(url=url,
+                       params={'access_token': GITHUB_TOKEN},
+                       headers={'User-Agent': 'Aligator the Aggregator'})
 
         if response.status_code == 200:
             json = loads(response.text)
             return json
         else:
-            app.logger.error('Request to %s failed with %s ', response.url, response.status_code)
-            raise PostAggregatorException('The GitHub API responded with %s' % response.status_code)
+            raise PostAggregationFailed('The GitHub API responded with %s' % response.status_code)
 
-    def get_repo_hash(self):
-        """ Return the hash of the master branch of the posts repo. """
+    def get_repo(self):
+        """ Return the hash of the specified branch in the posts repository. """
         json = self.request_json(self.url.path('repos',
                                                self.user,
                                                self.repo,
@@ -63,8 +49,8 @@ class Aggregator(object):
                                                self.branch))
         return json['commit']['sha']
 
-    def get_file_hashes(self, repo_hash):
-        """ Return the hashes of all posts found inside the repo. """
+    def get_files_in_repo(self, repo_hash):
+        """ Return the hashes of alget_repo_branchl posts found inside the repository. """
         json = self.request_json(self.url.path('repos',
                                                self.user,
                                                self.repo,
@@ -72,8 +58,12 @@ class Aggregator(object):
                                                'trees',
                                                repo_hash))
         for file in json['tree']:
-            if file['path'] not in self.exclude:
-                yield file['sha'], file['path']
+            filename = file['path']
+            extension = splitext(filename)[1]
+
+            if filename not in self.exclude:
+                if extension in VALID_EXTENSIONS:
+                    yield file['sha'], file['path']
 
     def get_file_content(self, file_hash):
         """ Return the content of a post as unicode. """
@@ -89,7 +79,7 @@ class Aggregator(object):
 
         return content_as_unicode
 
-    def get_last_commit(self, filename):
+    def get_file_commit(self, filename):
         """ Return the author, the date and the message of the last file commit. """
         json = self.request_json(self.url.path('repos',
                                                self.user,
@@ -98,9 +88,24 @@ class Aggregator(object):
         last = json[0]['commit']
         return last['author']['name'], last['author']['date'], last['message']
 
-if __name__ == '__main__':
-    """ Demonstrate the use of the module. """
 
-    for post in aggregate():
-        for info in post:
-            print(info)
+def fetch_posts():
+    """ Fetch the posts from the repository. """
+    a = Aggregator()
+
+    try:
+        repo = a.get_repo()
+        files = a.get_files_in_repo(repo)
+
+        for sha, filename in files:
+            content = a.get_file_content(sha)
+            author, date, message = a.get_file_commit(filename)
+
+            yield filename, author, date, message, content
+
+    except PostAggregationFailed:
+        raise
+
+
+if __name__ == '__main__':
+    pass
