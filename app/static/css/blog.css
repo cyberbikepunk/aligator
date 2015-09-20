@@ -1,3 +1,25 @@
+.comments {
+    margin-top: 50px;
+}
+
+#footer {
+    margin-top: 100px;
+    margin-bottom: 35px;
+}
+
+#cc {
+    height: 16px;
+    display: inline-block;
+}
+
+#main {
+    font-size: 16px;
+}
+
+#sidebar {
+    padding-left: 20px;
+}
+
 body {
     padding-top: 80px;
     font-size: 16px;
@@ -87,26 +109,4 @@ span.author {
 
 .jumbotron {
     padding: 20px;
-}
-
-.comments {
-    margin-top: 50px;
-}
-
-#footer {
-    margin-top: 100px;
-    margin-bottom: 35px;
-}
-
-#cc {
-    height: 16px;
-    display: inline-block;
-}
-
-#main {
-    font-size: 16px;
-}
-
-#sidebar {
-    padding-left: 20px;
 }
