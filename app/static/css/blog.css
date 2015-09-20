@@ -1,5 +1,6 @@
 .comments {
     margin-top: 50px;
+    margin-bottom: 40px;
 }
 
 #footer {
@@ -16,8 +17,9 @@
     font-size: 16px;
 }
 
-#sidebar {
+.inner {
     padding-left: 20px;
+    padding-right: 20px;
 }
 
 body {
@@ -69,7 +71,7 @@ samp.output {
 }
 
 nav.navbar {
-    height: 50px!important;
+    /*height: 50px!important;*/
 }
 
 #baseline > span.kwd,
@@ -94,7 +96,7 @@ span.author {
     text-align: justify;
 }
 
-.excerpt, .sticky {
+.excerpt {
     border-left: solid thick #EEEEEE;
     padding: 20px;
 
@@ -109,4 +111,22 @@ span.author {
 
 .jumbotron {
     padding: 20px;
+}
+
+#mobile-menu  {
+    background-color: #222222!important;
+}
+
+pre.prettyprint {
+    font-size: 15px;
+    border: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 15px!important;
+    font-family: 'Droid Sans Mono', Monaco, Menlo, Monaco, Consolas, "Courier New", monospace;
+
+}
+
+div.body > h2 {
+    text-align: left!important;
 }
