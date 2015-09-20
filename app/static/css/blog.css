@@ -25,13 +25,6 @@ kbd, samp {
     padding-bottom: 30px;
 }
 
-pre {
-    border: 1px solid #ccc!important;
-    padding: 5px 10px !important;
-    font-size: 14px;
-    font-family: monospace;
-}
-
 samp.output {
     font-weight: bold;
 }
@@ -94,4 +87,26 @@ span.author {
 
 .jumbotron {
     padding: 20px;
+}
+
+.comments {
+    margin-top: 50px;
+}
+
+#footer {
+    margin-top: 100px;
+    margin-bottom: 35px;
+}
+
+#cc {
+    height: 16px;
+    display: inline-block;
+}
+
+#main {
+    font-size: 16px;
+}
+
+#sidebar {
+    padding-left: 20px;
 }

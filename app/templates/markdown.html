@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    post.title | profile.blog
+    {{ post.title }} | {{ profile.blog }}
 {% endblock %}
 
 {% block main %}
@@ -15,7 +15,7 @@
             <div class="jumbotron">{{ post.content | markdown }}</div>
         {% endif %}
     </div>
-    <div class="row">
+    <div class="row comments">
         <div id="disqus_thread"></div>
     </div>
 {% endblock %}
