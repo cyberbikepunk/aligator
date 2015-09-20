@@ -5,17 +5,23 @@
 {% endblock %}
 
 {% block main %}
-    {% if post.is_normal or post.is_sticky %}
-        <h1>{{ post.title }}</h1>
-        <p class="timestamp">{{ post.timestamp }}</p>
-        <h2 class="lead excerpt">{{ post.excerpt | markdown}}</h2>
-        <div class="body">{{ post.body | markdown }}</div>
-    {% elif post.is_jumbo %}
-        <div class="jumbotron">{{ post.content | markdown }}</div>
-    {% endif %}
+    <div class="row">
+        {% if post.is_normal or post.is_sticky %}
+            <h1>{{ post.title }}</h1>
+            <p class="timestamp">{{ post.timestamp }}</p>
+            <h2 class="lead excerpt">{{ post.excerpt | markdown}}</h2>
+            <div class="body">{{ post.body | markdown }}</div>
+        {% elif post.is_jumbo %}
+            <div class="jumbotron">{{ post.content | markdown }}</div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div id="disqus_thread"></div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/disqus.js') }}"></script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 {% endblock %}
