@@ -2,17 +2,7 @@
 
 pre .str, code .str { color: #fec243; } /* string  - eggyolk gold */
 pre .kwd, code .kwd { color: #8470FF; } /* keyword - light slate blue */
-pre .com, code .com { color: #32cd32;
-olor: #6ecbcc;
-olor: #d06; } /
-olor: #8B8970;
-olor: #f0f0f0;
-olor: #9c9cff;
-olor: #dda0dd;
-olor: #d0a0d0;
-olor: #46eeee;
-olor: #EEB4B4;
-olor: #3387CC; font-style: italic; } /* comment - green */
+pre .com, code .com { color: #32cd32; font-style: italic; } /* comment - green */
 pre .typ, code .typ { color: #6ecbcc; } /* type - turq green */
 pre .lit, code .lit { color: #d06; } /* literal - cherry red */
 pre .pun, code .pun { color: #8B8970;  } /* punctuation - lemon chiffon4  */
@@ -61,7 +51,7 @@ li.L1,li.L3,li.L5,li.L7,li.L9 { }
   pre.prettyprint, code.prettyprint { background-color: #fff;  }
   pre .str, code .str { color: #088; }
   pre .kwd, code .kwd { color: #006; font-weight: bold; }
-  pre .com, code .com { color: #oc3; font-style: italic; }
+  pre .com, code .com { color: #0c3; font-style: italic; }
   pre .typ, code .typ { color: #404; font-weight: bold; }
   pre .lit, code .lit { color: #044; }
   pre .pun, code .pun { color: #440; }
