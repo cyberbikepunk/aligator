@@ -1,6 +1,6 @@
 .comments {
     margin-top: 50px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 #footer {
@@ -18,8 +18,8 @@
 }
 
 .inner {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 body {
@@ -129,4 +129,13 @@ pre.prettyprint {
 
 div.body > h2 {
     text-align: left!important;
+}
+
+#archive {
+    margin-bottom: 50px;
+}
+
+.navbar-header {
+    padding-left: 10px;
+    padding-right: 10px;
 }
