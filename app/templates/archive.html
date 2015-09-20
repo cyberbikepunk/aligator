@@ -1,37 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}
-    cyberbikepunk | Blog
-{% endblock %}
-
-{% block content %}
-        <div id="content" class="container">
-            {% for post in posts %}
-                {% if post.is_jumbo %}
-                    <div class="row jumbotron">
-                        {{ post.content | markdown }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            <div class="row">
-                    {% for post in posts %}
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            {% if post.is_sticky %}
-                                <h1>{{ post.title}}</h1>
-                                {{ post.timestamp }} | {{ post.author }}
-                                <p class="lead">{{ post.excerpt }}</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                    {% for post in posts %}
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            {% if post.is_normal %}
-                                <h1>{{ post.title }}</h1>
-                                {{ post.timestamp }} | {{ post.author }}
-                                <p class="lead">{{ post.excerpt | markdown }}</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+{% block main %}
+        {% for post in archive.jumbo_posts %}
+            <div class="row jumbotron">
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Toggle
+                </button>
+                <div class="collapse in" id="collapseExample">
+                    {{ post.content | markdown }}
+                </div>
             </div>
-        </div>
+        {% endfor %}
+       {% for post in archive.sticky_posts %}
+                <div class="row summary sticky">
+                    <h1><a href="{{ post.slug }}" title="{{ post.title }}">{{ post.title }}</a></h1>
+                    <span class="timestamp">{{ post.timestamp }}</span><span class="author"> | {{ post.author }}</span>
+                    <br><br>{{ post.excerpt | markdown }}
+                </div>
+        {% endfor %}
+         {% for post in archive.normal_posts %}
+                <div class="row summary">
+                    <h1><a href="{{ post.slug }}" title="{{ post.title }}">{{ post.title }}</a></h1>
+                    <span class="timestamp">{{ post.timestamp }}</span><span class="author"> | {{ post.author }}</span>
+                    <br><br>{{ post.excerpt | markdown }}
+                </div>
+        {% endfor %}
 {% endblock %}

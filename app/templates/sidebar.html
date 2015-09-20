@@ -1,0 +1,29 @@
+{% set p = profile %}
+
+<div class="row" xmlns:mailto="http://www.w3.org/1999/xhtml">
+    <div class="col-lg-6 col-md-6 col-sm-3 col-xs-4 pull-left">
+        <img src="{{ url_for('static', filename=p.photo) }}" class="img-rounded img-responsive" alt="{{ p.name }}">
+    </div>
+</div>
+
+<h2>{{ p.name }}</h2>
+<p class="lead">{{ p.title }}</p>
+{% if p.pitch %}
+    <p id="pitch">{{ p.pitch }}</p>
+{% endif %}
+<p>
+    <img src="{{ url_for('static', filename='img/email.png') }}" class="inline-block icon"><span>{{ p.email }}</span><br>
+    <img src="{{ url_for('static', filename='img/location.png') }}" class="inline-block icon"><span>{{ p.locations | join(', ') }}</span><br>
+</p>
+<p>
+    {% for organisation in p.organisations %}
+        <img src="{{ url_for('static', filename='img/star.png') }}"  class="inline-block icon">
+        <a href="{{ organisation.link }}" title="{{ organisation.name }}">{{ organisation.name | trim }}</a><br>
+    {% endfor %}
+</p>
+
+<p class="lead">
+    {% for tag in p.tags %}
+        <span class="label inline-block label-default">{{ tag }}</span>
+    {% endfor %}
+</p>

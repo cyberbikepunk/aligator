@@ -1,5 +1,5 @@
 """ The blueprint for the blog. """
 
 from flask import Blueprint
-blog = Blueprint('blog', __name__)
+blog = Blueprint('blog', __name__, url_prefix='/blog')
 from . import views, errors

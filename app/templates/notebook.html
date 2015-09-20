@@ -1,65 +1,68 @@
-{% extends "home.html" %}
+{% extends "base.html" %}
 
 {% block title %}
-    cyberbikepunk | Blog
+    post.title | profile.blog
 {% endblock %}
 
 {% block main %}
-    {% if notebook['cells'] %}
-        {% for cell in notebook['cells'] %}
+    <h1>{{ post.title }}</h1>
+    <p class="timestamp">{{ post.timestamp }}</p>
+    <h2 class="lead excerpt">{{ post.excerpt | markdown}}</h2>
+    <div class="body">
+        {% if post.body['cells'] %}
+            {% for cell in post.body['cells'] %}
 
-            {% if cell['cell_type'] == 'markdown' %}
-                {# ------------- #}
-                {# MARKDOWN CELL #}
-                {# ------------- #}
-                {% for line in cell['source'] %}
-                    {{ line | markdown }}
-                {% endfor %}
+                {% if cell['cell_type'] == 'markdown' %}
+                    {# ------------- #}
+                    {# MARKDOWN CELL #}
+                    {# ------------- #}
+                    {% for line in cell['source'] %}
+                        {{ line | markdown }}
+                    {% endfor %}
 
-            {% elif cell['cell_type'] == 'code' %}
-                {# --------- #}
-                {# CODE CELL #}
-                {# --------- #}
-                {% if cell['source'] %}
-                    <pre class="highlight prettyprint">{% for line in cell['source'] %}{{ line }}{% endfor %}</pre>
-                {% endif %}
-
-                {% set outputs = cell['outputs'] %}
-                {# ------------ #}
-                {# CELL OUTPUTS #}
-                {# ------------ #}
-
-                {% if outputs %}
-                    {% if outputs[0]['name'] == 'stdout' %}
-                        {# --------------- #}
-                        {# Standard output #}
-                        {# --------------- #}
-                        <samp> {% for line in outputs[0]['text'] %}
-                            {{ line }}<br>
-                        {% endfor %} </samp>
-                        <p></p>
+                {% elif cell['cell_type'] == 'code' %}
+                    {# --------- #}
+                    {# CODE CELL #}
+                    {# --------- #}
+                    {% if cell['source'] %}
+                        <pre class="highlight prettyprint">{% for line in cell['source'] %}{{ line }}{% endfor %}</pre>
                     {% endif %}
 
-                    {% if outputs[1] %}
-                        {% if outputs[1]['data']['text/plain'] %}
-                            {# ----------- #}
-                            {# Cell output #}
-                            {# ----------- #}
-                            <samp class="output"> {% for line in outputs[1]['data']['text/plain'] %}
-                                {{ line }}
+                    {% set outputs = cell['outputs'] %}
+                    {# ------------ #}
+                    {# CODE OUTPUTS #}
+                    {# ------------ #}
+
+                    {% if outputs %}
+                        {% if outputs[0]['name'] == 'stdout' %}
+                            {# ---------------- #}
+                            {# STDOUT or STDERR #}
+                            {# ---------------- #}
+                            <samp> {% for line in outputs[0]['text'] %}
+                                {{ line }}<br>
                             {% endfor %} </samp>
                             <p></p>
                         {% endif %}
+
+                        {% if outputs[1] %}
+                            {% if outputs[1]['data']['text/plain'] %}
+                                {# ----------- #}
+                                {# CELL RESULT #}
+                                {# ----------- #}
+                                <samp class="output"> {% for line in outputs[1]['data']['text/plain'] %}
+                                    {{ line }}
+                                {% endfor %} </samp>
+                                <p></p>
+                            {% endif %}
+                        {% endif %}
                     {% endif %}
-
                 {% endif %}
-
-            {% endif %}
-
-        {% endfor %}
-    {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='js/disqus.js') }}"></script>
 {% endblock %}
