@@ -1,5 +1,10 @@
-""" This module holds the model for the blog blueprint. Heads up: there is no database. """
+""" This module holds the model for the blog blueprint.
 
+Heads up: there is no database. Posts are imported from GitHub when the application
+starts up and stored in memory. The Archive class simulates the database query interface.
+
+"""
+from itertools import chain
 
 from arrow import get
 from os.path import splitext
@@ -84,6 +89,58 @@ class Post(object):
     def timestamp(self):
         return self.last_commit_date.format('dddd D MMMM YYYY')
 
+    @property
+    def template(self):
+        return 'notebook.html' if self.is_notebook else 'markdown.html'
 
-# There's no database: posts are imported from GitHub
+    @cached_property
+    def body(self):
+        """ Return the markdown content excluding the title and the excerpt. """
+        if self.is_notebook:
+            new = self.json
+            new['cells'][0]['source'] = new['cells'][0]['source'][4:]
+            return new
+        else:
+            return '\n'.join(self.top_lines[4:])
+
+    @staticmethod
+    def is_header(line):
+        return line.startswith('#')
+
+
+class Archive(object):
+    def __init__(self, posts_):
+        self.posts = posts_
+
+    def __repr__(self):
+        return '<Archive: %s posts>' % len(self.posts)
+
+    def from_slug(self, slug):
+        for p in self.posts:
+            if p.slug == slug:
+                return p
+
+    def from_author(self, author):
+        for p in self.posts:
+            if p.slug == author:
+                return p
+
+    @property
+    def sticky_posts(self):
+        return [p for p in self.posts if p.is_sticky]
+
+    @property
+    def jumbo_posts(self):
+        return [p for p in self.posts if p.is_jumbo]
+
+    @property
+    def normal_posts(self):
+        return [p for p in self.posts if p.is_normal]
+
+    @property
+    def by_importance(self):
+        return list(chain(self.jumbo_posts, self.sticky_posts, self.normal_posts))
+
+
 posts = [Post(*post) for post in fetch_posts(**GITHUB)]
+archive = Archive(posts)

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+    post.title | profile.blog
+{% endblock %}
+
+{% block main %}
+    {% if post.is_normal or post.is_sticky %}
+        <h1>{{ post.title }}</h1>
+        <p class="timestamp">{{ post.timestamp }}</p>
+        <h2 class="lead excerpt">{{ post.excerpt | markdown}}</h2>
+        <div class="body">{{ post.body | markdown }}</div>
+    {% elif post.is_jumbo %}
+        <div class="jumbotron">{{ post.content | markdown }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/disqus.js') }}"></script>
+{% endblock %}

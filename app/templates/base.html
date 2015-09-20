@@ -14,10 +14,22 @@
 {% endblock %}
 
 {% block content %}
-    {# home, archive or post #}
+    <div id="content" class="container">
+        <div class="row">
+            <div id="main" class="col-md-8 col-sm-12 col-xs-12">
+                {% block main %}
+                    {# archive or post #}
+                {% endblock %}
+            </div>
+            <div id="sidebar" class="col-md-4 col-sm-12 col-xs-12">
+                {% include 'sidebar.html' %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block footer %}
+    {{ super() }}
     <div id="footer" class="container">
         <small class="text-left">Powered by Flask and Bootstrap. CC licensed. Source code on <a href="http://github.com/cyberpunk/blog">github</a></small>
     </div>
