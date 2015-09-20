@@ -21,22 +21,33 @@
                     {# archive or post #}
                 {% endblock %}
             </div>
-            <div id="sidebar" class="col-md-4 col-sm-12 col-xs-12">
-                {% include 'sidebar.html' %}
+            <div class="col-md-4 col-sm-12 col-xs-12">
+                <div id="sidebar">
+                    {% include 'sidebar.html' %}
+                </div>
             </div>
+        </div>
+        <div id="footer" class="container text-center">
+            <small>
+                <span>This blog is written in </span>
+                <span><a href="http://python.org" title="Flask">Python</a></span>
+                <span>and uses open-source code like </span>
+                <span><a href="http://flask.pocoo.org/" title="Flask">Flask</a></span>
+                <span> and <a href="http://flask.pocoo.org/" title="Bootstrap">Bootstrap</a>.</span><br>
+                <span>There ain't no database. </span>
+                <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" title="CC License">CC Licensed </a>
+                <span>content is pulled directly from this</span>
+                <span><a href="https://github.com/cyberbikepunk/posts" title="Content repository"> repo.</a></span>
+                <span>See the <a href="https://github.com/cyberbikepunk/blog" title="source code repository">source code.</a></span>
+                <br><span><img id="cc" src="{{ url_for('static', filename='img/cc.png') }}"></span>  cyberbikepunk 2015
+            </small>
         </div>
     </div>
 {% endblock %}
 
-{% block footer %}
-    {{ super() }}
-    <div id="footer" class="container">
-        <small class="text-left">Powered by Flask and Bootstrap. CC licensed. Source code on <a href="http://github.com/cyberpunk/blog">github</a></small>
-    </div>
-{% endblock %}
 
 {% block scripts %}
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}">
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=py"></script>
+{#    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=py"></script>#}
 {% endblock %}

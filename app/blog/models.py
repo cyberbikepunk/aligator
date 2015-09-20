@@ -79,7 +79,7 @@ class Post(object):
 
     @cached_property
     def title(self):
-        return self.top_lines[0].lstrip('#').lstrip()
+        return self.top_lines[0].lstrip('#').lstrip().rstrip('#')
 
     @cached_property
     def excerpt(self):
