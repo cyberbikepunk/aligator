@@ -2,7 +2,7 @@
 .idea/
 
 #Sensitive info
-/instance
+/instance/settings.py
 
 # Garbage
 /sandbox
