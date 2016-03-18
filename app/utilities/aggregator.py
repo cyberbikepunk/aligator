@@ -5,6 +5,7 @@ from os.path import splitext
 from json import loads
 from base64 import b64decode
 from requests import get
+
 from .murls import https
 
 
@@ -117,4 +118,4 @@ def fetch_posts(**kwargs):
 
 
 if __name__ == '__main__':
-    pass
+    fetch_posts(repo='posts', exclude=(), token=None, user=None, branch='master')
