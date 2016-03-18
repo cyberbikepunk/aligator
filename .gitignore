@@ -1,3 +1,4 @@
+/instance/resume.json
 # PyCharm
 .idea/
 
@@ -22,6 +23,7 @@ build/
 develop-eggs/
 dist/
 downloads/
+/instance/index.html
 eggs/
 .eggs/
 lib/
