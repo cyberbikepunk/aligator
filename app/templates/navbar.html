@@ -26,15 +26,6 @@
             <p class="navbar-text navbar-keft visible-md visible-lg">
                 <span>{{ profile.baseline | lower }}</span>
             </p>
-            <ul id="accounts" class="nav navbar-nav navbar-right">
-                {% for account in profile.accounts %}
-                    <li><a href="{{ account.link }}" target="_blank" title="{{ account.name }}">
-                        <span class="visible-xs">{{ account.name | title }}</span>
-                        {% set icon = 'img/' ~ account.name | lower() ~ '.png' %}
-                        <img src="{{ url_for('static', filename=icon) }}" class="img-rounded visible-sm visible-lg visible-md" alt="{{ account.name | title }}">
-                    </a></li>
-                {% endfor %}
-            </ul>
         </div>
     </div>
 </nav>

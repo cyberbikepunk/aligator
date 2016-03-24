@@ -8,6 +8,18 @@
 
 <h2>{{ p.name }}</h2>
 <p class="lead">{{ p.title }}</p>
+
+<p class="lead">
+    {% for account in p.accounts %}
+        <span>
+            <a class="social" href="{{ account.link }}" target="_blank" title="{{ account.name }}">
+                {% set icon = 'img/' ~ account.name | lower() ~ '.png' %}
+                <img src="{{ url_for('static', filename=icon) }}" class="img-rounded" alt="{{ account.name | title }}">
+            </a>
+        </span>
+    {% endfor %}
+</p>
+
 {% if p.pitch %}
     <p id="pitch">{{ p.pitch }}</p>
 {% endif %}
@@ -18,7 +30,7 @@
 <p>
     {% for organisation in p.organisations %}
         <img src="{{ url_for('static', filename='img/star.png') }}"  class="inline-block icon">
-        <a href="{{ organisation.link }}" title="{{ organisation.name }}">{{ organisation.name | trim }}</a><br>
+        <a href="{{ organisation.link }}" target="_blank" title="{{ organisation.name }}">{{ organisation.name | trim }}</a><br>
     {% endfor %}
 </p>
 
