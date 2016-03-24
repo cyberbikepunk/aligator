@@ -38,7 +38,9 @@ class Aggregator(object):
             json = loads(response.text)
             return json
         else:
-            raise PostAggregationFailed('The GitHub API responded with %s' % response.status_code)
+            message = 'The GitHub API error {code}: {json}'
+            params = {'code': response.status_code, 'json': response.text}
+            raise PostAggregationFailed(message.format(**params))
 
     def get_repo(self):
         """ Return the hash of the specified branch of the repository. """
