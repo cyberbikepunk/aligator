@@ -113,9 +113,9 @@ span.author {
     padding: 20px;
 }
 
-#mobile-menu  {
-    background-color: #222222!important;
-}
+/*#mobile-menu  {*/
+    /*background-color: #222222!important;*/
+/*}*/
 
 pre.prettyprint {
     font-size: 15px;
@@ -138,4 +138,12 @@ div.body > h2 {
 .navbar-header {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.navbar {
+    background-color: black;
+}
+
+a.social:hover {
+    text-decoration: None;
 }
