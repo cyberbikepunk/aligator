@@ -4,9 +4,11 @@
 from flask import render_template, abort
 from markdown import markdown
 from flask import Markup
-from . import blog
-from instance.settings import USER_PROFILE as USER
-from .models import archive
+from importlib import reload
+
+from app.blog import blog
+from instance.profile import PROFILE as USER
+from app.blog.models import archive
 
 
 @blog.app_template_filter('markdown')
@@ -17,6 +19,11 @@ def markdown_filter(data):
 @blog.route('/')
 def multiple_posts():
     return render_template('archive.html', profile=USER, archive=archive)
+
+
+@blog.route('/reload')
+def reload_posts():
+    reload('app.models')
 
 
 @blog.route('/<slug>')

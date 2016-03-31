@@ -1,7 +1,8 @@
 """ Error handlers for the blog blueprint. """
 
+
 from flask import render_template
-from . import blog
+from app.blog import blog
 
 
 @blog.app_errorhandler(404)
