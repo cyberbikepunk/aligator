@@ -3,7 +3,7 @@
 .idea/
 
 #Sensitive info
-/instance/settings.py
+/instance/profile.py
 
 # Garbage
 /sandbox
