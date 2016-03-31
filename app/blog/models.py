@@ -4,32 +4,35 @@ Heads up: there is no database. Posts are imported from GitHub when the applicat
 starts up and stored in memory. The Archive class simulates the database query interface.
 
 """
-from itertools import chain
 
-from arrow import get
-from os.path import splitext
+
+from itertools import chain
 from json import loads
+from logging import info
+from os.path import splitext
+from arrow import get
 from slugify import slugify
 from werkzeug.utils import cached_property
-from instance.settings import JUMBO, STICKY
-from ..utilities.aggregator import fetch_posts
-from instance.settings import GITHUB
+
+from app.blog.aggregator import fetch_posts
+from instance.profile import GITHUB
+from instance.profile import JUMBO, STICKY
 
 
 class Post(object):
     def __init__(self,
                  filename,
                  author,
-                 commit_date,
-                 commit_message,
+                 date,
                  content):
 
         self.filename = filename
         self.author = author
-        self.last_commit_message = commit_message
-        self.last_commit_date = get(commit_date)
+        self.creation_date = get(date)
         self.content = content
         self.slug = slugify(self.title)
+
+        info('Created %s', self)
 
     def __repr__(self):
         return '<Post: %s>' % self.title
@@ -87,7 +90,7 @@ class Post(object):
 
     @cached_property
     def timestamp(self):
-        return self.last_commit_date.format('dddd D MMMM YYYY')
+        return self.creation_date.format('dddd D MMMM YYYY')
 
     @property
     def template(self):
@@ -111,6 +114,7 @@ class Post(object):
 class Archive(object):
     def __init__(self, posts_):
         self.posts = posts_
+        info('Created %s ', self)
 
     def __repr__(self):
         return '<Archive: %s posts>' % len(self.posts)
