@@ -20,8 +20,8 @@ class TestBlogModels(TestCase):
         with open(notebook_file) as f:
             notebook_content = f.read()
 
-        self.markdown_post = Post('markdown.md', 'Mickey', '2015-09-19T09:37:17Z', 'Yo!', markdown_content)
-        self.notebook_post = Post('notebook.ipynb', 'Mickey', '2015-09-19T09:37:17Z', 'Yo!', notebook_content)
+        self.markdown_post = Post('markdown.md', 'Mickey', '2015-09-19T09:37:17Z', markdown_content)
+        self.notebook_post = Post('notebook.ipynb', 'Mickey', '2015-09-19T09:37:17Z', notebook_content)
 
     def tearDown(self):
         pass
@@ -47,10 +47,6 @@ class TestBlogModels(TestCase):
     def test_author(self):
         self.assertEquals('Mickey', self.markdown_post.author)
         self.assertEquals('Mickey', self.notebook_post.author)
-
-    def test_message(self):
-        self.assertEquals('Yo!', self.markdown_post.last_commit_message)
-        self.assertEquals('Yo!', self.notebook_post.last_commit_message)
 
     def test_timestamp(self):
         self.assertEquals('Saturday 19 September 2015', self.markdown_post.timestamp)
