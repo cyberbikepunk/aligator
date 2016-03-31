@@ -1,22 +1,24 @@
 """ Global configuration settings. """
 
 
-class Config:
+class BaseConfig:
     @staticmethod
     def init_app(app):
         pass
 
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(BaseConfig):
+    ENVIRONMENT = 'development'
     DEBUG = True
 
 
-class TestingConfig(Config):
+class TestingConfig(BaseConfig):
+    ENVIRONMENT = 'testing'
     TESTING = True
 
 
-class ProductionConfig(Config):
-    pass
+class ProductionConfig(BaseConfig):
+    ENVIRONMENT = 'production'
 
 
 choose = {

@@ -1,29 +1,35 @@
-""" This module instantiates a Flask application. """
+""" This module instantiates the Alligator application. """
 
-from flask import Flask
-from config import choose
-from .blog.views import blog
-from flask.ext.bootstrap import Bootstrap
+
+from logging import StreamHandler
 from os import getenv
+from flask import Flask
 from flask.ext.script import Manager
+from flask.ext.bootstrap import Bootstrap
 from flask import redirect
 
+from app.blog.views import blog
+from config import choose
 
-def create_app(environment_name):
+
+def create_app():
     app_ = Flask(__name__)
 
-    environment = choose[environment_name]
-    app_.config.from_object(environment)
-    environment.init_app(app_)
-
+    environment = getenv('ALLIGATOR_ENVIRONMENT', 'production')
+    configuration = choose[environment]
+    app_.config.from_object(configuration)
+    configuration.init_app(app_)
     app_.register_blueprint(blog)
 
     return app_
 
 
-enviroment_name = getenv('ALIGATOR_ENVIRONMENT', 'production')
-app = create_app(enviroment_name)
+def add_handlers(app):
+    console = StreamHandler(stream=stdout)
+    app.logger.addHandler(console)
 
+app = create_app()
+add_handlers(app)
 bootstrap = Bootstrap(app)
 manager = Manager(app)
 
@@ -31,4 +37,3 @@ manager = Manager(app)
 @app.route('/')
 def index():
     return redirect('/blog/')
-
