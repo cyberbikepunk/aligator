@@ -7,10 +7,6 @@ from requests import Session
 from werkzeug.utils import cached_property
 from logging import error, debug
 
-from logger import get_custom_logger
-log = get_custom_logger(__name__)
-log.info('hello')
-
 
 class GitHubRequestError(Exception):
     blueprint = 'Requested {url}, got {code}: {json}'

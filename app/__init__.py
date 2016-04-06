@@ -1,7 +1,6 @@
 """ This module instantiates the Alligator application. """
 
 
-from logging import StreamHandler
 from os import getenv
 from flask import Flask
 from flask.ext.script import Manager
@@ -24,12 +23,7 @@ def create_app():
     return app_
 
 
-def add_handlers(app):
-    console = StreamHandler(stream=stdout)
-    app.logger.addHandler(console)
-
 app = create_app()
-add_handlers(app)
 bootstrap = Bootstrap(app)
 manager = Manager(app)
 
